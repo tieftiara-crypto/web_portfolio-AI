@@ -1,17 +1,18 @@
-# 🤖 Asisten Pintar AI (Full-Stack Web App)
+# 🤖 Efti-Bot: Ultimate AI Assistant
 
-Selamat datang di *repository* Web Portofolio AI milik **Eftiara**! 🚀
+Selamat datang di *repository* portofolio AI milik **Eftiara**! 🚀
 
-Ini adalah proyek *website Artificial Intelligence* yang saya bangun menggunakan bahasa pemrograman **Python**. Asisten pintar ini diotaki langsung oleh teknologi **Google Gemini AI** dan dapat berinteraksi secara *real-time*.
+Ini adalah *Full-Stack Web App* yang mengintegrasikan berbagai model kecerdasan buatan dari Google (Gemini & Imagen) untuk menciptakan asisten pribadi yang interaktif dan serba bisa.
 
-## ✨ Fitur Keren di Web Ini:
-- **Chatbot Pintar:** Bisa menjawab pertanyaan apa saja layaknya ChatGPT.
-- **AI Vision:** Bisa menerima *upload* gambar dan menganalisis/menjelaskan isi gambar tersebut!
-- **Aman (Security First):** Menggunakan sistem API Key *input* mandiri, sehingga data pengguna aman.
+## ✨ Fitur Unggulan:
+- **🗣️ Gaul & Punya Ingatan (Persona & Memory):** AI ini memiliki gaya bahasa kasual dan mampu mengingat riwayat obrolan sebelumnya.
+- **👁️ AI Vision (Image Analyzer):** Pengguna dapat mengunggah gambar dan AI mampu menganalisis serta menjelaskan isi gambar tersebut.
+- **🎨 Text-to-Image (AI Painter):** Cukup ketik "Gambar: [deskripsi]", maka web ini akan meng-generate gambar berkualitas tinggi sesuai permintaan.
+- **🔒 Keamanan Terjamin:** Menggunakan sistem *sidebar input* untuk API Key secara mandiri.
 
-## 🌍 Coba Langsung Web-nya!
-Anda bisa langsung mencoba ngobrol dengan AI buatan saya di sini:
-👉 **[KLIK UNTUK MEMBUKA WEB AI EFTIARA](https://web-ai-eftiara.streamlit.app)**
+## 🌍 Coba Aplikasinya Sekarang!
+Anda bisa langsung mencoba kemampuan web AI ini pada tautan berikut:
+👉 **[KLIK UNTUK MEMBUKA APLIKASI WEB](https://web-ai-eftiara.streamlit.app)**
 
 ---
-*Dibuat dengan ❤️ oleh Eftiara menggunakan Python, Streamlit, dan Google GenAI.*
+*Dibuat menggunakan Python, Streamlit, dan Google GenAI SDK.*
