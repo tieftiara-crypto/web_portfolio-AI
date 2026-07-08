@@ -3,10 +3,33 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
-# Setup Halaman
+# 1. SETUP HALAMAN (Harus ditaruh di paling atas)
 st.set_page_config(page_title="Asisten Pintar Eftiara", page_icon="🤖", layout="centered")
 
-# --- SIDEBAR (Menu Samping) ---
+# 2. CUSTOM BACKGROUND (Efek Gradient Biru Gelap + Teks Putih)
+st.markdown(
+    """
+    <style>
+    /* Mengubah background aplikasi */
+    .stApp {
+        background: linear-gradient(to bottom right, #141E30, #243B55);
+    }
+    
+    /* Memaksa semua teks di halaman utama berwarna putih agar kontras */
+    h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
+        color: white !important;
+    }
+    
+    /* Memastikan teks yang diketik di kolom chat berwarna hitam agar tetap terbaca */
+    .stChatInput textarea {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# 3. SIDEBAR (Menu Samping)
 with st.sidebar:
     st.header("⚙️ Pengaturan")
     st.write("Masukkan kunci rahasia lu di bawah ini untuk mengaktifkan AI.")
@@ -20,7 +43,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Dibuat dengan ❤️ oleh Eftiara")
 
-# --- HALAMAN UTAMA ---
+# 4. HALAMAN UTAMA
 st.title("🤖 Asisten Pintar Eftiara")
 st.write("Selamat datang! Asisten ini siap membantu, membaca gambar, dan melukis untukmu.")
 
@@ -42,13 +65,14 @@ if api_key:
     
     st.markdown("---")
     
-    # Tampilkan memori chat dan gambar
+    # Menampilkan riwayat chat dan gambar dari memori
     for msg in st.session_state.messages:
         if msg["role"] == "ai_image":
             st.image(msg["content"], caption="Hasil lukisan Efti-Bot")
         else:
             st.chat_message(msg["role"]).write(msg["content"])
     
+    # Kolom input chat bawaan Streamlit
     prompt = st.chat_input("Tanya apa saja atau ketik 'Gambar: [deskripsi]'...")
     
     if prompt:
@@ -57,7 +81,7 @@ if api_key:
         
         with st.spinner("Efti-Bot lagi kerja keras..."):
             try:
-                # Logika bikin gambar
+                # Logika Fitur 3: Bikin Gambar (Text-to-Image)
                 if prompt.lower().startswith("gambar:"):
                     deskripsi = prompt[7:].strip()
                     result = client.models.generate_images(
@@ -73,7 +97,7 @@ if api_key:
                         st.image(image_bytes, caption=f"Hasil gambar: {deskripsi}")
                         st.session_state.messages.append({"role": "ai_image", "content": image_bytes})
                 else:
-                    # Logika chat biasa & baca gambar
+                    # Logika Fitur 1 & 2: Chat biasa & Baca gambar (Vision) + Mengingat riwayat
                     riwayat_obrolan = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages if m['role'] != 'ai_image'])
                     
                     if uploaded_file is not None:
@@ -94,4 +118,4 @@ if api_key:
             except Exception as e:
                 st.error(f"Waduh ada error: {e}")
 else:
-    st.info("👈 Buka menu di sebelah kiri dan masukkan API Key lu buat mulai.")
+    st.info("👈 Buka menu di sebelah kiri (klik tanda panah jika tertutup) dan masukkan API Key lu buat mulai.")
