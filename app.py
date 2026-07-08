@@ -3,49 +3,61 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
-# 1. SETUP HALAMAN (Harus ditaruh di paling atas)
+# 1. SETUP HALAMAN (Paling Atas)
 st.set_page_config(page_title="Asisten Pintar Eftiara", page_icon="🤖", layout="centered")
 
-# 2. CUSTOM BACKGROUND (Efek Gradient Biru Gelap + Teks Putih)
+# 2. CUSTOM TAMPILAN (CSS biar Cerah & Jelas)
 st.markdown(
     """
     <style>
-    /* Mengubah background aplikasi */
+    /* Background Putih Bersih */
     .stApp {
-        background: linear-gradient(to bottom right, #141E30, #243B55);
+        background-color: #FFFFFF;
     }
     
-    /* Memaksa semua teks di halaman utama berwarna putih agar kontras */
+    /* Warna Teks Hitam Jelas */
     h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {
-        color: white !important;
+        color: #000000 !important;
     }
     
-    /* Memastikan teks yang diketik di kolom chat berwarna hitam agar tetap terbaca */
-    .stChatInput textarea {
-        color: black !important;
+    /* Rapihin Kotak Input Chat biar kelihatan */
+    .stChatInput {
+        border: 2px solid #DDDDDD !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Bikin Judul & Gambar jadi satu baris rapi */
+    .header-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .header-container img {
+        margin-right: 15px;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# 3. SIDEBAR (Menu Samping)
-with st.sidebar:
-    st.header("⚙️ Pengaturan")
-    st.write("Masukkan kunci rahasia lu di bawah ini untuk mengaktifkan AI.")
-    api_key = st.text_input("Google API Key:", type="password")
-    
-    st.markdown("---")
-    st.markdown("**Panduan Fitur:**")
-    st.markdown("💬 **Chat Biasa:** Langsung ketik pertanyaanmu.")
-    st.markdown("👀 **Mata AI:** Upload gambar, lalu suruh AI jelaskan.")
-    st.markdown("🎨 **Pelukis AI:** Ketik awalan **Gambar:** untuk membuat gambar (Contoh: *Gambar: robot main bola*).")
-    st.markdown("---")
-    st.caption("Dibuat dengan ❤️ oleh Eftiara")
+# 3. HEADER DENGAN GAMBAR LUCU
+st.markdown(
+    """
+    <div class="header-container">
+        <img src="https://img.icons8.com/fluent/96/robot-3.png" width="80" alt="Cute Robot"/>
+        <h1>Asisten Pintar Eftiara</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# 4. HALAMAN UTAMA
-st.title("🤖 Asisten Pintar Eftiara")
-st.write("Selamat datang! Asisten ini siap membantu, membaca gambar, dan melukis untukmu.")
+# 4. HALAMAN UTAMA & INPUT API KEY (Kembali ke Atas)
+st.write("Selamat datang! Asisten unyu ini siap membantu, membaca gambar, dan melukis untukmu.")
+
+st.markdown("---")
+st.write("🔧 **Pengaturan:** Masukkan kunci rahasia lu di bawah ini untuk mengaktifkan AI.")
+api_key = st.text_input("Google API Key:", type="password", help="Dapatkan kunci di Google AI Studio")
+st.markdown("---")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -54,16 +66,14 @@ if api_key:
     client = genai.Client(api_key=api_key)
     
     karakter_ai = """
-    Kamu adalah Efti-Bot, asisten pribadi Eftiara yang super gaul dan ramah. 
-    Selalu panggil pengguna dengan 'Bro' atau 'Sis'. Gunakan emoji seru!
+    Kamu adalah Efti-Bot, asisten pribadi Eftiara yang super gaul, ramah, dan lucu. 
+    Selalu panggil pengguna dengan 'Bro' atau 'Sis'. Gunakan emoji unyu!
     """
     
     uploaded_file = st.file_uploader("📷 Upload gambar untuk dianalisis (Opsional):", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         image_user = Image.open(uploaded_file)
         st.image(image_user, caption="Gambar siap dianalisis", width=300)
-    
-    st.markdown("---")
     
     # Menampilkan riwayat chat dan gambar dari memori
     for msg in st.session_state.messages:
@@ -118,4 +128,4 @@ if api_key:
             except Exception as e:
                 st.error(f"Waduh ada error: {e}")
 else:
-    st.info("👈 Buka menu di sebelah kiri (klik tanda panah jika tertutup) dan masukkan API Key lu buat mulai.")
+    st.info("👆 Masukkan API Key lu di kolom atas supaya asisten unyu ini bangun.")
