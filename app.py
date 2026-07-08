@@ -2,12 +2,27 @@ import streamlit as st
 from google import genai
 from google.genai import types
 from PIL import Image
-import io
 
+# Setup Halaman
+st.set_page_config(page_title="Asisten Pintar Eftiara", page_icon="🤖", layout="centered")
+
+# --- SIDEBAR (Menu Samping) ---
+with st.sidebar:
+    st.header("⚙️ Pengaturan")
+    st.write("Masukkan kunci rahasia lu di bawah ini untuk mengaktifkan AI.")
+    api_key = st.text_input("Google API Key:", type="password")
+    
+    st.markdown("---")
+    st.markdown("**Panduan Fitur:**")
+    st.markdown("💬 **Chat Biasa:** Langsung ketik pertanyaanmu.")
+    st.markdown("👀 **Mata AI:** Upload gambar, lalu suruh AI jelaskan.")
+    st.markdown("🎨 **Pelukis AI:** Ketik awalan **Gambar:** untuk membuat gambar (Contoh: *Gambar: robot main bola*).")
+    st.markdown("---")
+    st.caption("Dibuat dengan ❤️ oleh Eftiara")
+
+# --- HALAMAN UTAMA ---
 st.title("🤖 Asisten Pintar Eftiara")
-st.write("Selamat datang! AI ini bisa Chat, Baca Gambar, dan **BIKIN Gambar!**")
-
-api_key = st.text_input("Masukkan Google API Key di sini:", type="password")
+st.write("Selamat datang! Asisten ini siap membantu, membaca gambar, dan melukis untukmu.")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -20,22 +35,21 @@ if api_key:
     Selalu panggil pengguna dengan 'Bro' atau 'Sis'. Gunakan emoji seru!
     """
     
-    st.write("---")
-    st.info("💡 **Tips:** Kalau mau suruh AI bikin gambar, ketik awalan 'Gambar:' (Contoh: *Gambar: kucing pakai kacamata*)")
-    
-    uploaded_file = st.file_uploader("📷 Kirim gambar ke AI (Opsional):", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("📷 Upload gambar untuk dianalisis (Opsional):", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         image_user = Image.open(uploaded_file)
-        st.image(image_user, caption="Gambar siap dianalisis", use_container_width=True)
+        st.image(image_user, caption="Gambar siap dianalisis", width=300)
+    
+    st.markdown("---")
     
     # Tampilkan memori chat dan gambar
     for msg in st.session_state.messages:
         if msg["role"] == "ai_image":
-            st.image(msg["content"])
+            st.image(msg["content"], caption="Hasil lukisan Efti-Bot")
         else:
             st.chat_message(msg["role"]).write(msg["content"])
     
-    prompt = st.chat_input("Tanya apa saja atau suruh AI bikin gambar...")
+    prompt = st.chat_input("Tanya apa saja atau ketik 'Gambar: [deskripsi]'...")
     
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
@@ -43,10 +57,9 @@ if api_key:
         
         with st.spinner("Efti-Bot lagi kerja keras..."):
             try:
-                # Logika sakti: Cek apakah user minta gambar
+                # Logika bikin gambar
                 if prompt.lower().startswith("gambar:"):
                     deskripsi = prompt[7:].strip()
-                    # Perintah AI untuk melukis
                     result = client.models.generate_images(
                         model='imagen-3.0-generate-001',
                         prompt=deskripsi,
@@ -60,7 +73,7 @@ if api_key:
                         st.image(image_bytes, caption=f"Hasil gambar: {deskripsi}")
                         st.session_state.messages.append({"role": "ai_image", "content": image_bytes})
                 else:
-                    # Chat dan analisa gambar biasa
+                    # Logika chat biasa & baca gambar
                     riwayat_obrolan = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages if m['role'] != 'ai_image'])
                     
                     if uploaded_file is not None:
@@ -81,4 +94,4 @@ if api_key:
             except Exception as e:
                 st.error(f"Waduh ada error: {e}")
 else:
-    st.info("👆 Masukkan API Key lu di kolom atas supaya asistennya bangun.")
+    st.info("👈 Buka menu di sebelah kiri dan masukkan API Key lu buat mulai.")
