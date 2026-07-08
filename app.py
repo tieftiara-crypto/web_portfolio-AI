@@ -1,32 +1,46 @@
 import streamlit as st
 from google import genai
-
-st.set_page_config(page_title="Web AI Eftiara", page_icon="🤖")
+from PIL import Image
 
 st.title("🤖 Asisten Pintar Eftiara")
 st.write("Selamat datang di portofolio AI buatan Eftiara! Silakan masukkan kunci untuk mulai.")
 
-# Trik aman: Minta API Key lewat tampilan web (jadi kode lu 100% aman ditaruh di mana aja!)
 api_key = st.text_input("Masukkan Google API Key di sini:", type="password")
 
 if api_key:
-    klien_ai = genai.Client(api_key=api_key)
+    # Bangunin AI-nya
+    client = genai.Client(api_key=api_key)
     
-    user_input = st.chat_input("Tanya apa saja ke asisten ini...")
+    # Fitur upload gambar
+    st.write("---")
+    uploaded_file = st.file_uploader("📷 Kirim gambar ke AI (Opsional):", type=["jpg", "jpeg", "png"])
     
-    if user_input:
-        # Menampilkan pertanyaan lu
-        st.chat_message("user").write(user_input)
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Gambar siap dianalisis", use_container_width=True)
+    
+    # Kolom chat
+    prompt = st.chat_input("Tanya apa saja atau suruh AI jelaskan gambar di atas...")
+    
+    if prompt:
+        st.chat_message("user").write(prompt)
         
-        # Menampilkan jawaban AI
-        with st.chat_message("assistant"):
+        with st.spinner("Asisten sedang berpikir..."):
             try:
-                respons = klien_ai.models.generate_content(
-                    model='gemini-2.5-flash', 
-                    contents=user_input
-                )
-                st.write(respons.text)
+                if uploaded_file is not None:
+                    # Kalau nanya pakai gambar
+                    response = client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=[image, prompt]
+                    )
+                else:
+                    # Kalau cuma nanya teks biasa
+                    response = client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=prompt
+                    )
+                st.chat_message("ai").write(response.text)
             except Exception as e:
-                st.error("Waduh, ada yang error. Coba cek lagi API Key-nya udah bener belum ya?")
+                st.error(f"Waduh ada error: {e}")
 else:
     st.info("👆 Masukkan API Key lu di kolom atas supaya asistennya bangun.")
